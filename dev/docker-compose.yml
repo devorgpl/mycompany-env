@@ -87,6 +87,16 @@ services:
       - 5002:5002
     depends_on:
       - mongodb
+  mycompany-web:
+    image: ghcr.io/devorgpl/mycompany-web
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1G
+    ports:
+      - 80:80
+ 
 
 volumes:
   postgres_data:
