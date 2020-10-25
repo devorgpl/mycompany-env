@@ -73,7 +73,7 @@ services:
       - 5001:5001
     depends_on:
       - mongodb
-  converters:
+  converts:
     image: ghcr.io/devorgpl/converters-ms
     deploy:
       resources:
@@ -95,8 +95,18 @@ services:
           cpus: '0.50'
           memory: 1G
     ports:
-      - 80:80
- 
+      - 8080:80
+  revproxy:
+    build: revproxy
+    restart: unless-stopped
+    environment:
+      - CERTBOT_EMAIL=mckontakt@hmail.pl
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+    volumes:
+      - certbot_data:/etc/letsencrypt
+      - revproxy_data:/etc/nginx/conf.d
 
 volumes:
   postgres_data:
@@ -105,3 +115,8 @@ volumes:
     driver: local
   mongodb_data:
     driver: local
+  certbot_data:
+    driver: local
+  revproxy_data:
+    driver: local
+
