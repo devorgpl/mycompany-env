@@ -1,0 +1,18 @@
+server {
+    listen 443 ssl;
+    server_name adm.mf.net.pl;
+    server_tokens off;
+
+    ssl_certificate /etc/letsencrypt/live/adm.mf.net.pl/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/adm.mf.net.pl/privkey.pem;
+
+   location / {
+        proxy_pass  http://keycloak:8080;
+        proxy_set_header    X-Real-IP           $remote_addr;
+	proxy_set_header Host $host;
+	proxy_set_header X-Forwarded-For $host;
+	proxy_set_header X-Forwarded-Proto $scheme;
+   }
+
+}
+

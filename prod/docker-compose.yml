@@ -1,0 +1,114 @@
+version: "3.8"
+
+services:
+  keycloak:
+    image: quay.io/keycloak/keycloak:11.0.2
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1G
+        reservations:
+          memory: 500M
+    env_file:
+      - prodconf/keycloak.env
+    depends_on:
+      - keycloak_pg
+  keycloak_pg:
+    image: postgres:9.6-alpine
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1G
+        reservations:
+          memory: 500M
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    env_file:
+      - prodconf/postgres.env
+  minio:
+    image: minio/minio:RELEASE.2020-10-18T21-54-12Z
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 500M
+    env_file:
+      - minio.env
+    volumes:
+      - minio_data:/data
+    command: "server /data"
+  mongodb:
+    image: mongo:4.0.20-xenial
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1G
+        reservations:
+          memory: 500M
+    ports:
+      - 27017:27017
+    volumes:
+      - mongodb_data:/data/db
+  companies:
+    image: ghcr.io/devorgpl/companies-ms:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1G
+    environment:
+      - DB_HOST=mongodb
+    ports:
+      - 5001:5001
+    depends_on:
+      - mongodb
+  converts:
+    image: ghcr.io/devorgpl/converters-ms:latest
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1G
+    environment:
+      - DB_HOST=mongodb
+      - STORAGE_HOST=minio
+    ports:
+      - 5002:5002
+    depends_on:
+      - mongodb
+  mycompany-web:
+    image: ghcr.io/devorgpl/mycompany-web:release
+    deploy:
+      resources:
+        limits:
+          cpus: '0.50'
+          memory: 1G
+    ports:
+      - 8080:80
+  revproxy:
+    build: revproxy
+    restart: unless-stopped
+    environment:
+      - CERTBOT_EMAIL=mckontakt@hmail.pl
+    ports:
+      - 80:80/tcp
+      - 443:443/tcp
+    volumes:
+      - certbot_data:/etc/letsencrypt
+      - revproxy_data:/etc/nginx/conf.d
+
+volumes:
+  postgres_data:
+    driver: local
+  minio_data:
+    driver: local
+  mongodb_data:
+    driver: local
+  certbot_data:
+    driver: local
+  revproxy_data:
+    driver: local
+
