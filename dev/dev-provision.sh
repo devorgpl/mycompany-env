@@ -27,11 +27,11 @@ ${EXEC_KC} ./kcadm.sh create clients -r my-company \
   -s clientId=website-client \
   -s enabled=true \
   -s publicClient=true \
-  -s 'redirectUris=["http://localhost:4200/*"]' \
-  -s baseUrl=http://localhost:4200/
+  -s 'redirectUris=["https://mf.net.pl/*"]' \
+  -s baseUrl=https://mf.net.pl/
 
 ## add role as default
-export EXEC_KC_D="docker exec -i -w /opt/jboss/keycloak/bin env_keycloak_1 "
+export EXEC_KC_D="docker exec -i -w /opt/jboss/keycloak/bin dev_keycloak_1 "
 echo '{ "realm": "my-company", "enabled": true, "defaultRoles" : [ "offline_access", "uma_authorization", "website-access" ], '\
   '"registrationAllowed" : true, "registrationEmailAsUsername" : true, "rememberMe" : true, "verifyEmail" : false, "loginWithEmailAllowed" : true, "duplicateEmailsAllowed" : false,'\
   '"resetPasswordAllowed" : true, "editUsernameAllowed" : false, "bruteForceProtected" : false }' | ${EXEC_KC_D} ./kcadm.sh update realms/my-company -f -
