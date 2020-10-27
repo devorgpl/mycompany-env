@@ -7,7 +7,6 @@ DEV_SERVER_ADDRESS=$1
 echo ${DEV_SERVER_ADDRESS}
 
 DOCKER_HOST="ssh://${DEV_DOCKER_USER}@${DEV_SERVER_ADDRESS}" docker-compose pull
-DOCKER_HOST="ssh://${DEV_DOCKER_USER}@${DEV_SERVER_ADDRESS}" docker-compose build
-DOCKER_HOST="ssh://${DEV_DOCKER_USER}@${DEV_SERVER_ADDRESS}" docker-compose up -d --remove-orphans
+DOCKER_HOST="ssh://${DEV_DOCKER_USER}@${DEV_SERVER_ADDRESS}" docker-compose up -d --build --remove-orphans
 DOCKER_HOST="ssh://${DEV_DOCKER_USER}@${DEV_SERVER_ADDRESS}" docker-compose restart revproxy
 
