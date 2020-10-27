@@ -35,7 +35,7 @@ services:
           cpus: '0.50'
           memory: 500M
     env_file:
-      - minio.env
+      - prodconf/minio.env
     volumes:
       - minio_data:/data
     command: "server /data"
