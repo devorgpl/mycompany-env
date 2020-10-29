@@ -72,9 +72,9 @@ services:
         limits:
           cpus: '0.50'
           memory: 1G
-    environment:
-      - DB_HOST=mongodb
-      - STORAGE_HOST=minio
+    env_file:
+      - prodconf/converts.env
+      - prodconf/minio.env
     ports:
       - 5002:5002
     depends_on:
